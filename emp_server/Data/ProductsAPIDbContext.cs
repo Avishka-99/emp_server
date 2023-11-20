@@ -9,5 +9,6 @@ namespace emp_server.Data
         {
         }
         public DbSet<Products> Products { get; set; }
+        public DbSet<Staff> Staff { get; set; }
     }
 }

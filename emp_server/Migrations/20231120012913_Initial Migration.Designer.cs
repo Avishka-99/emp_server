@@ -12,7 +12,7 @@ using emp_server.Data;
 namespace emp_server.Migrations
 {
     [DbContext(typeof(ProductsAPIDbContext))]
-    [Migration("20231118171916_Initial Migration")]
+    [Migration("20231120012913_Initial Migration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -44,6 +44,36 @@ namespace emp_server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("emp_server.Models.Staff", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Age")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Department")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("contact_email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("contact_no")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Staff");
                 });
 #pragma warning restore 612, 618
         }
