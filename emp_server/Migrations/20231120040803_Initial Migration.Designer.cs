@@ -12,7 +12,7 @@ using emp_server.Data;
 namespace emp_server.Migrations
 {
     [DbContext(typeof(ProductsAPIDbContext))]
-    [Migration("20231120012913_Initial Migration")]
+    [Migration("20231120040803_Initial Migration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
