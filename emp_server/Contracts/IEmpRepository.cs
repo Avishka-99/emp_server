@@ -6,5 +6,8 @@ namespace emp_server.Contracts
     {
         public Task<IEnumerable<Products>> GetProducts();
         public Task CreateProduct(ProductCreation product);
+        public Task<Products> GetProduct(int id);
+        public Task DeleteProduct(int id);
+        public Task<IEnumerable<Products>> SearchProduct(string keyword);
     }
 }

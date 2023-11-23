@@ -22,31 +22,9 @@ namespace emp_server.Controllers
             //return Ok(await dbContext.Products.ToListAsync());
             //return View();
         }
-        /*public ProductController(ProductsAPIDbContext dbContext )
-        {
-              this.dbContext = dbContext;
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetProducts()
-        {
-            return Ok(await dbContext.Products.ToListAsync());
-            //return View();
-        }*/
         [HttpPost]
         public async Task<IActionResult> CreateProduct([FromBody] ProductCreation addProductRequest)
         {
-            /*var product = new Products()
-            {
-                Id = Guid.NewGuid(),
-                Name = addProductRequest.Name,
-                Price = addProductRequest.Price,
-                Quantity = addProductRequest.Quantity,
-            };
-            Console.WriteLine(product);
-            await dbContext.Products.AddAsync(product);
-            await dbContext.SaveChangesAsync();
-            return Ok(product);*/
             try
             {
                 await emp_repository.CreateProduct(addProductRequest);
@@ -60,20 +38,60 @@ namespace emp_server.Controllers
             
 
         }
-        /*
-        [HttpDelete]
-        [Route("{id:guid}")]
-        public async Task<IActionResult> DeleteProduct([FromRoute] Guid id)
+
+        [HttpGet]
+        [Route("{id:int}")]
+        public async Task<IActionResult> GetProduct(int id)
         {
-            var product = await dbContext.Products.FindAsync(id);
-            if(product != null) 
+            try
             {
-                dbContext.Remove(product);
-                await dbContext.SaveChangesAsync();
-                return Ok();
+                var product = await emp_repository.GetProduct(id);
+                if (product == null)
+                {
+                    return BadRequest();
+                }
+
+                return Ok(product);
+            }catch (Exception ex)
+            {
+                return StatusCode(500,ex.Message);
             }
-            return NotFound();
         }
-    }*/
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            try
+            {
+                var product = await emp_repository.GetProduct(id);
+                if(product == null)
+                {
+                    return BadRequest();    
+                }
+                await emp_repository.DeleteProduct(id);
+                return Ok();
+            }catch (Exception ex)
+            {
+                return StatusCode(500,ex.Message);
+            }
+        }
+        [HttpGet]
+        [Route("search/{keyword}")]
+        public async Task<IActionResult> SearchProduct(string keyword)
+        {
+            try
+            {
+                var product = await emp_repository.SearchProduct(keyword);
+                if (product == null)
+                {
+                    return BadRequest();
+                }
+
+                return Ok(product);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }
