@@ -3,6 +3,7 @@ using emp_server.Contracts;
 using emp_server.Data;
 using emp_server.Dbo;
 using emp_server.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace emp_server.Repository
@@ -22,20 +23,9 @@ namespace emp_server.Repository
                 return products.ToList();
             }
         }
-        /*async Task IEmpRepository.CreateProduct(ProductCreation product)
-        {
-            var query = "INSERT INTO Products (Name,Price,Quantity) VALUES(@Name,@Price,@Quantity)";
-            var parameters = new DynamicParameters(product);
-            using (var connection = _context.CreateConnection())
-            {
-                await connection.QueryAsync<Products>(query);
-            }
-
-        }*/
-
         async Task  IEmpRepository.CreateProduct(ProductCreation product)
         {
-            var query = "INSERT INTO Products (Name,Price,Quantity) VALUES('chocolate',3298,312)";
+            var query = "INSERT INTO Products (Name,Price,Quantity) VALUES(@name,@price,@quantity)";
             var parameters = new DynamicParameters(product);
             using (var connection = _context.CreateConnection())
             {
@@ -49,6 +39,47 @@ namespace emp_server.Repository
                     Quantity = (int)product.Quantity
                 };
                 return createdProduct;*/
+            }
+        }
+
+        /*Task<Products> IEmpRepository.GetProduct(int id)
+        {
+            var qurey = "SELECT * FROM PRODUCTS WHERE Id=@id";
+            using (var connection = _context.CreateConnection())
+            {
+                var product = connection.QuerySingleOrDefaultAsync<Products>(qurey, new { id });
+                return product;
+            }
+        }*/
+
+        async Task<Products> IEmpRepository.GetProduct(int id)
+        {
+            var qurey = "SELECT * FROM Products WHERE Id = @Id";
+            using (var connection = _context.CreateConnection())
+            {
+                var product = await connection.QuerySingleOrDefaultAsync<Products>(qurey, new { id });
+                //Console.WriteLine(product);
+                return product;
+            }
+        }
+        async Task IEmpRepository.DeleteProduct(int id)
+        {
+            var qurey = "DELETE FROM Products WHERE Id = @Id";
+            using (var connection = _context.CreateConnection())
+            {
+                var product = await connection.ExecuteAsync(qurey, new { id });
+                //Console.WriteLine(product);
+                //return product;
+            }
+        }
+        async Task<IEnumerable<Products>> IEmpRepository.SearchProduct(string keyword)
+        {
+            var qurey = "SELECT * FROM Products WHERE Name LIKE '%' + @Keyword + '%'";
+            using (var connection = _context.CreateConnection())
+            {
+                var product = await connection.QueryAsync<Products>(qurey,new { keyword});
+                //Console.WriteLine(product);
+                return product;
             }
         }
     }
