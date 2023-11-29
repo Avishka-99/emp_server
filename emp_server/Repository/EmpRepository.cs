@@ -3,6 +3,7 @@ using emp_server.Contracts;
 using emp_server.Data;
 using emp_server.Dbo;
 using emp_server.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
@@ -62,14 +63,14 @@ namespace emp_server.Repository
                 return product;
             }
         }
-        async Task IEmpRepository.DeleteProduct(int id)
+        async Task<int> IEmpRepository.DeleteProduct(int id)
         {
             var qurey = "DELETE FROM Products WHERE Id = @Id";
             using (var connection = _context.CreateConnection())
             {
                 var product = await connection.ExecuteAsync(qurey, new { id });
                 //Console.WriteLine(product);
-                //return product;
+                return id;
             }
         }
         async Task<IEnumerable<Products>> IEmpRepository.SearchProduct(string keyword)
@@ -80,6 +81,33 @@ namespace emp_server.Repository
                 var product = await connection.QueryAsync<Products>(qurey,new { keyword});
                 //Console.WriteLine(product);
                 return product;
+            }
+        }
+        async Task<IEnumerable<User>> IEmpRepository.VerifyUser(string name,string password)
+        {
+            var query = "SELECT User_id FROM [User] WHERE email=@Name AND password=@password";
+            using (var connection = _context.CreateConnection())
+            {
+                var user = await connection.QueryAsync<User>(query, new {name,password});
+                return user;
+            }
+        }
+        async Task IEmpRepository.CreateUser(UserCreation addUser)
+        {
+            var query = "INSERT INTO [User] (name,email,password) VALUES(@name,@email,@password)";
+            var parameters = new DynamicParameters(addUser);
+            using (var connection = _context.CreateConnection())
+            {
+                await connection.ExecuteAsync(query, parameters);
+                /*var id = await connection.QuerySingleAsync<Guid>(query, parameters);
+                var createdProduct = new Products
+                {
+                    Id = id,
+                    Name = product.Name,
+                    Price = (float)product.Price,
+                    Quantity = (int)product.Quantity
+                };
+                return createdProduct;*/
             }
         }
     }
