@@ -67,8 +67,8 @@ namespace emp_server.Controllers
                 {
                     return BadRequest();    
                 }
-                await emp_repository.DeleteProduct(id);
-                return Ok();
+               var deleted_product=await emp_repository.DeleteProduct(id);
+                return Ok(deleted_product);
             }catch (Exception ex)
             {
                 return StatusCode(500,ex.Message);
